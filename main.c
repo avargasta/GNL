@@ -6,7 +6,7 @@
 /*   By: anvargas <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/23 18:31:01 by anvargas          #+#    #+#             */
-/*   Updated: 2024/07/22 21:53:08 by anvargas         ###   ########.fr       */
+/*   Updated: 2024/07/31 23:03:28 by anvargas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int	main(void)
 		free(line);
 		line = get_next_line(fd);
 		i++;
+		//printf("--\n");
 	}
 	close(fd);
 	return (0);
