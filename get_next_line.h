@@ -6,7 +6,7 @@
 /*   By: anvargas <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/23 18:26:13 by anvargas          #+#    #+#             */
-/*   Updated: 2024/07/22 21:10:07 by anvargas         ###   ########.fr       */
+/*   Updated: 2024/08/10 11:46:50 by anvargas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,14 @@ typedef struct s_datanode_list
 	int						nl_i;
 }							t_dn_list;
 
-int							ft_strchr_index(const char *s, int c);
-t_dn_list					*ft_node(t_dn_list **lst, t_dn_list *new, int n_rd);
-int							ft_strchr_i_strl(char option, const char *s, int c);
+t_dn_list					*nodeinf(t_dn_list **lst, t_dn_list *new, int n_rd);
+int							strchri_strl(char option, char l_r, const char *s);
 char						*ft_strjoin(char *s1, char *s2);
 void						ft_lstclear(t_dn_list **lst, void (*del)(void *));
 t_dn_list					**get_line_list(int fd, t_dn_list **line_list);
 char						*get_the_rest(t_dn_list *last);
 char						*get_the_line(t_dn_list *line_to_list, char *rest);
 char						*get_next_line(int fd);
-char						*gnl_aux(char opt, char *rst, int index, int rst_l);
+char						*gnl_aux(char opt, char *rst);
 
 #endif // GET_NEXT_LINE_H

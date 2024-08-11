@@ -6,22 +6,22 @@
 /*   By: anvargas <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 19:48:41 by anvargas          #+#    #+#             */
-/*   Updated: 2024/08/01 20:22:13 by anvargas         ###   ########.fr       */
+/*   Updated: 2024/08/10 12:17:40 by anvargas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	strchri_strl(char option, const char *s, char c)
+int	strchri_strl(char option, char l_r, const char *s)
 {
 	int		i;
 
 	i = 0;
 	if (option == 'c')
 	{
-		while (s[i] != '\0' && s[i] != c)
+		while (s[i] != '\0' && s[i] != '\n')
 			i++;
-		if (s[i] == c)
+		if (s[i] == '\n')
 			return (i);
 		return (-1);
 	}
@@ -31,7 +31,7 @@ int	strchri_strl(char option, const char *s, char c)
 			return (0);
 		while (s[i] != '\0')
 		{
-			if (s[i] == '\n')
+			if (s[i] == '\n' && l_r == 'l')
 				return (i + 1);
 			i += 1;
 		}
@@ -50,7 +50,7 @@ t_dn_list	*nodeinf(t_dn_list **lst, t_dn_list *new, int n_rd)
 	}
 	new->content[n_rd] = '\0';
 	new->n_read = n_rd;
-	new->nl_i = strchri_strl('c', new->content, '\n');
+	new->nl_i = strchri_strl('c', 0, new->content);
 	if (!*lst)
 	{
 		*lst = new;
@@ -60,7 +60,6 @@ t_dn_list	*nodeinf(t_dn_list **lst, t_dn_list *new, int n_rd)
 	while (temp->next)
 		temp = temp->next;
 	temp->next = new;
-	//printf("TN: %p / %s\n", temp->next, temp->content);
 	return (new);
 }
 
@@ -71,8 +70,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	char	*str;
 	int		i;
 
-	s1_l = strchri_strl('l', s1, '\0');
-	s2_l = strchri_strl('l', s2, '\0');
+	s1_l = strchri_strl('l', 'l', s1);
+	s2_l = strchri_strl('l', 'l', s2);
 	str = (char *)malloc(sizeof(char) * (s1_l + s2_l + 1));
 	if (!str)
 		return (free(s1), NULL);
@@ -80,6 +79,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	while (++i < s1_l)
 		str[i] = s1[i];
 	free(s1);
+	i = i - 1;
 	while (++i < (s1_l + s2_l))
 		str[i] = s2[i - s1_l];
 	str[i] = '\0';
@@ -91,8 +91,11 @@ void	ft_lstclear(t_dn_list **lst, void (*del)(void *))
 	t_dn_list	*current;
 	t_dn_list	*next;
 
-	if (!lst || !del || !(*lst))
+	if (!(*lst))
+	{
+		free(lst);
 		return ;
+	}
 	current = *lst;
 	while (current)
 	{
@@ -105,6 +108,9 @@ void	ft_lstclear(t_dn_list **lst, void (*del)(void *))
 	free(lst);
 }
 
+//printf("Voy a modificar el rest: %s\n", rst);
+//printf("Calculo strchri_strl: %d\n", strchri_strl('l', 'r', rst));
+//printf("Calculo index: %d\n", index);
 char	*gnl_aux(char opt, char *rst)
 {
 	int		i;
@@ -112,10 +118,10 @@ char	*gnl_aux(char opt, char *rst)
 	int		index;
 
 	i = -1;
-	index = strchri_strl('c', rst, '\n');
+	index = strchri_strl('c', 0, rst);
 	if (opt == 'r')
 	{
-		new = malloc(sizeof(char) * (strchri_strl('l', rst, '\0') - index));
+		new = malloc(sizeof(char) * (strchri_strl('l', 'r', rst) - index));
 		if (!new)
 			return (NULL);
 		while (rst[index + 1 + ++i] != '\0')
@@ -128,7 +134,7 @@ char	*gnl_aux(char opt, char *rst)
 	if (!new)
 		return (NULL);
 	while (++i <= index)
-    	new[i] = rst[i];
+		new[i] = rst[i];
 	new[i] = '\0';
 	return (new);
 }

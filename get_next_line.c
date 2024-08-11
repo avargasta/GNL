@@ -6,20 +6,22 @@
 /*   By: anvargas <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 18:54:47 by anvargas          #+#    #+#             */
-/*   Updated: 2024/08/01 19:46:10 by anvargas         ###   ########.fr       */
+/*   Updated: 2024/08/11 11:24:53 by anvargas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+//printf("🔴 Estoy en get_line_list\n");
 t_dn_list	**get_line_list(int fd, t_dn_list **line_list)
 {
 	t_dn_list	*new_node;
 	int			n_read;
 
-	printf("🔴 Estoy en get_line_list\n");
 	*line_list = NULL;
 	n_read = BUFFER_SIZE;
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+		return (line_list);
 	while (n_read == BUFFER_SIZE)
 	{
 		new_node = malloc(sizeof(t_dn_list));
@@ -40,12 +42,13 @@ t_dn_list	**get_line_list(int fd, t_dn_list **line_list)
 	return (line_list);
 }
 
+	//printf("🟡 Estoy en get_the_rest\n");
+	//printf("El output de get_the _rest es:\n--%s--\n", rest);
 char	*get_the_rest(t_dn_list *last)
 {
 	char	*rest;
 	int		i;
-	
-	printf("🟡 Estoy en get_the_rest\n");
+
 	while (last->next)
 		last = last->next;
 	if (last->nl_i == -1)
@@ -63,13 +66,14 @@ char	*get_the_rest(t_dn_list *last)
 	while (i < last->n_read - last->nl_i)
 	{
 		((unsigned char *)rest)[i] = ((unsigned char *)last->content)[i
-			+ strchri_strl('l', last->content, '\0')];
+			+ strchri_strl('l', 'l', last->content)];
 		i++;
 	}
-	printf("El output de get_the _rest es:\n--%s--\n", rest);
 	return (rest);
 }
 
+	//printf("La línea es:\n %s\n", line);
+	//printf("El output de get_the_line es:\n %s\n", line);
 char	*get_the_line(t_dn_list *line_to_list, char *rest)
 {
 	char	*line;
@@ -77,36 +81,33 @@ char	*get_the_line(t_dn_list *line_to_list, char *rest)
 	if (line_to_list->content[0] == '\0' && rest && rest[0] == '\0')
 		return (free(rest), NULL);
 	line = rest;
-	printf("La línea es:\n %s\n", line);
 	while (line_to_list->next)
 	{
 		line = ft_strjoin(line, line_to_list->content);
 		if (!line)
 			return (NULL);
 		line_to_list = line_to_list->next;
-		printf("La línea es:\n %s\n", line);
 	}
 	if (line_to_list->nl_i == -1 && line_to_list->n_read == BUFFER_SIZE)
 		return (free(line), NULL);
 	line = ft_strjoin(line, line_to_list->content);
 	if (!line)
 		return (NULL);
-	printf("El output de get_the_line es:\n %s\n", line);
 	return (line);
 }
 
+		//printf("🌟🌟🌟El rest original es:\n ##%s##\n", rest);
+		//printf("🌟🌟🌟El output de get_the_rest es:\n ##%s##\n”, rest);
 char	*get_next_line(int fd)
 {
 	static char		*rest;
 	t_dn_list		**line_to_list;
 	char			*line;
 
-	if (rest && strchri_strl('c', rest, '\n') != -1)
+	if (rest && strchri_strl('c', 0, rest) != -1)
 	{
-		printf("🌟🌟🌟El rest original es:\n %s\n", rest);
 		line = gnl_aux('l', rest);
 		rest = gnl_aux('r', rest);
-		printf("🌟🌟🌟El output de get_the_rest es:\n %s\n", rest);
 	}
 	else
 	{
@@ -114,7 +115,7 @@ char	*get_next_line(int fd)
 		if (!line_to_list)
 			return (NULL);
 		line_to_list = get_line_list(fd, line_to_list);
-		if (!*line_to_list)
+		if (!*line_to_list || ((*line_to_list)->content[0] == '\0' && !rest))
 			return (free(rest), ft_lstclear(line_to_list, free), NULL);
 		line = get_the_line(*line_to_list, rest);
 		rest = get_the_rest(*line_to_list);
@@ -122,7 +123,6 @@ char	*get_next_line(int fd)
 	}
 	if (!rest || !line)
 		return (free(line), free(rest), NULL);
+	printf("..%s..\n", line);
 	return (line);
 }
-
-
